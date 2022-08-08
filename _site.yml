@@ -19,6 +19,7 @@ navbar:
           href: page_5.html
         - text: "---------------"
         - text: "Insurance EDA Functions"
+          href: https://github.com/akins11/Exploratory-data-analysis-in-R/blob/main/eda_functions.R
 output:
   html_document:
     theme: yeti
