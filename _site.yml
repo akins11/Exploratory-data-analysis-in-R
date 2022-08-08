@@ -1,0 +1,24 @@
+name: "Vehicle Insurance Exploratory Analysis"
+output_dir: "docs"
+navbar:
+  title: "Vehicle Insurance Exploratory Analysis"
+  left:
+    - text: "Home"
+      href: index.html
+    - text: "Analysis"
+      menu:
+        - text: "Customer Lifetime Values"
+          href: page_1.html
+        - text: "Determining Auto Premium"
+          href: page_2.html
+        - text: "Policies Owned"
+          href: page_3.html
+        - text: "Sales Channels And Vehicle Classification"
+          href: page_4.html
+        - text: "Types of Auto Policy and Customer Income"
+          href: page_5.html
+        - text: "---------------"
+        - text: "Insurance EDA Functions"
+output:
+  html_document:
+    theme: yeti

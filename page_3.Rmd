@@ -1,0 +1,100 @@
+---
+title: "Analysis On Number Of Policies Owned By policyholders"
+output: 
+  html_document:
+      toc: true
+      toc_float: 
+        smooth_scroll: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.width = 10)
+```
+
+```{r message=FALSE, include=FALSE, results='hide'}
+source("lab_data.R", local = knitr::knit_global())
+source("eda_functions.R", local = knitr::knit_global())
+```
+<br>
+
+### Number of policies with total claim amount
+```{r}
+data_np <- data %>% 
+  select(number_of_policies, total_claim_amount) %>% 
+  mutate(number_of_policies = as.character(number_of_policies))
+
+num_cat_sumy(data_np, total_claim_amount, number_of_policies, sumy_fun = sum)
+
+corr_lysis(data, number_of_policies, total_claim_amount)
+```
+  
+The number of policies does not have a positive relationship with the total
+amount claimed by policyholders.
+  
+<br>
+
+### Number of policy and the Number of open complains by customers
+##### Count of open complain
+```{r}
+data %>% 
+  mutate(number_of_open_complaints = as.character(number_of_open_complaints)) %>% 
+  count_obs(number_of_open_complaints)
+```
+  
+Few customers made more than 2 complains about the company products and services. 
+  
+```{r}
+data %>% 
+  group_by(number_of_policies, number_of_open_complaints) %>% 
+  count(name = "count") %>% 
+  ungroup() %>%
+  
+  ggplot(aes(factor(number_of_policies), count)) +
+  geom_col(fill = "#42b395") +
+  facet_wrap(vars(number_of_open_complaints), ncol = 3, scales = "free_y") +
+  theme_minimal() +
+  labs(x = "Number Of Policies", y = "Count", 
+       title = "Count of Number of Policy By Number of Open Complain")
+```
+  
+##### Percentage of complains made by number of policy owned
+```{r}
+data %>% 
+  group_by(number_of_policies, number_of_open_complaints) %>% 
+  count(name = "count") %>% 
+  ungroup() %>% 
+  left_join(count(data, number_of_policies), by = "number_of_policies") %>% 
+  mutate(prop = count/n*100) %>% 
+  select(-c(count, n)) %>% 
+  pivot_wider(number_of_policies, 
+              names_from = number_of_open_complaints, 
+              values_from = prop, values_fill = 0)
+```
+
+A lager number of customers for all numbers of policy owned made zero complains.
+  
+<br>
+
+### Relationship between number of policy owned and policy type
+```{r}
+data %>% 
+  count(number_of_policies, policy_type, name = "count") %>% 
+  
+  ggplot(aes(count, 
+             reorder_within(factor(number_of_policies), count, policy_type))) +
+  geom_col(fill = "#42b395") +
+  facet_wrap(vars(policy_type), scales = "free", ncol = 3) +
+  scale_y_reordered() +
+  labs(y = "Number Of Policy", 
+       title = "Count of Number of Policy By Policy Type") +
+  geom_text(aes(label = count), hjust = 1.0) +
+  theme_minimal() +
+  theme(axis.text.x = element_blank(), axis.title.x = element_blank())
+```
+  
+For each type of policy, customers with 1 to 3 policies at most have the 
+highest number of customers. Special auto have the least number of customers for each number of policy. Also customers with 6 policies have the lowest count for corporate and personal auto policy types.
+  
+<br>
+Previous [Various Features Used In Determining Auto Premium](page_2.html)  
+Next [Sales Channels And Vehicle Classification](page_4.html)

@@ -1,0 +1,151 @@
+---
+title: "Analysis on Customer Lifetime Values"
+output: 
+  html_document:
+    toc: true
+    toc_float: 
+      smooth_scroll: false
+  
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.width = 10)
+```
+
+```{r message=FALSE, include=FALSE, results='hide'}
+source("lab_data.R", local = knitr::knit_global())
+source("eda_functions.R", local = knitr::knit_global())
+```
+<br>
+
+### The average CLV based on each channel of customer acquisition.
+```{r}
+count_obs(data, sales_channel)
+```
+We can see that majority of the customers  where acquired through auto insurance sales agencies followed by the company's other branches, while less success was achieved using online platforms to acquire new customers. 
+  
+```{r}
+numeric_dis(data, customer_lifetime_value)
+```
+  
+The average CLV is 5,780, Most policyholders have less than 10,000 CLV and just a few are above 40,000.
+<br>
+
+##### Distribution of CLV by sales channel.  
+```{r}
+num_cat_dis(data, 
+            customer_lifetime_value, 
+            sales_channel, 
+            outlier = "suo",
+            p_typ = "box")
+```
+  
+##### Average CLV by sales channel.
+```{r}
+num_cat_sumy(data, customer_lifetime_value, sales_channel)
+```
+
+##### Total CLV by sales channel.
+```{r}
+num_cat_sumy(data, customer_lifetime_value, sales_channel, sumy_fun = median)
+```
+
+While There is a huge difference in the total CLV for all sales channels, when we look at the median CLV there is only a slight distinction for all channels  
+<br>
+
+
+### Customer's income effect on CLV
+```{r}
+numeric_dis(data, income)
+
+data %>% 
+  mutate(zero_income = if_else(income == 0, "zero income", "non-zero income")) %>%
+  group_by(zero_income) %>% 
+  summarise(count = n(), proportion = count/nrow(data)*100)
+```
+  
+2,317 customers which is 25.4% of the total customer have 0 income. Also fewer customers have income above 62,320.
+
+```{r}
+corr_lysis(data, customer_lifetime_value, income)
+
+data %>% 
+  ggplot(aes(customer_lifetime_value, income)) +
+  geom_point(alpha = 0.5, color = "#65ab7c") +
+  scale_x_continuous(labels = scales::comma_format()) +
+  scale_y_continuous(labels = scales::comma_format()) +
+  labs(x = "Customer Lifetime Value", y = "Income") +
+  ggtitle("Relationship Between Customer Income & CLV") +
+  theme_minimal()
+```
+  
+There is a weak positive correlation between customer income and CLV, we can't be certain that customers with high income are not majorly buying more auto policy than customers with low income as there are other major factors influencing this relationship.
+<br>
+
+### The relationship between CLV and number of policy owned.
+```{r}
+data_np <- data %>% 
+  select(number_of_policies, customer_lifetime_value) %>% 
+  mutate(number_of_policies = as.character(number_of_policies))
+
+count_obs(data_np, number_of_policies)
+```
+  
+The above plot shows that there are more customers with 7 and 9 number policies than customers with 4 and 5, the top three number of policy owned by customers are 1, 2 and 3 which is not surprising.
+  
+  
+```{r}
+num_cat_sumy(data_np, customer_lifetime_value, number_of_policies)
+```
+  
+More customers with a high (above 20,000) CLV have 2 types of policy.
+Customers with just 1 policy have the lowest median CLV while customers with 7 policies have the second highest CLV.  
+  
+<br>
+
+#### Locations of the company most valuable customers.
+##### State analysis
+```{r}
+count_obs(data, state)
+num_cat_sumy(data, customer_lifetime_value, state)
+num_cat_sumy(data, customer_lifetime_value, state, p_typ = "min_max")
+```
+  
+The count shows the top three state with the most market share are California, Oregon, and Arizona.
+  
+##### Location code analysis.
+```{r}
+count_obs(data, location_code)
+num_cat_dis(data, customer_lifetime_value, location_code, p_typ = "fqp")
+num_cat_sumy(data, customer_lifetime_value, location_code)
+```
+
+##### Removing outliers. 
+```{r}
+num_cat_sumy(data, customer_lifetime_value, location_code, outlier = "uo")
+```
+  
+```{r}
+num_cat_sumy(data, customer_lifetime_value, location_code, p_typ = "min_max")
+```
+  
+More customers leave in suburban than rural and urban areas, while urban dwellers are the least majority group.  
+For all the three location area most customers have low CLV than high CLV but rural dwellers have the highest median CLV.
+  
+##### Joint analysis
+```{r}
+count_obs2(data, state, location_code)
+
+num_cat_sumy2(data, 
+              customer_lifetime_value, 
+              state, 
+              location_code,
+              txt_pos = 1500)
+```
+  
+The most valuable customers leaving in Rural area can be found in Oregon.
+In Suburban area California has the highest average CLV. While in Urban area most valuable customers leave in Nevada.  
+   
+<br>
+Previous [Set Up](index.html)  
+Next [Various Features Used In Determining Auto Premium](page_2.html)

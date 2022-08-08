@@ -1,0 +1,93 @@
+---
+title: "Analysis On Types of Auto Policy and Customer Income"
+output: 
+  html_document:
+      toc: true
+      toc_float: 
+        smooth_scroll: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.width = 10)
+```
+
+```{r message=FALSE, include=FALSE, results='hide'}
+source("lab_data.R", local = knitr::knit_global())
+source("eda_functions.R", local = knitr::knit_global())
+```
+<br>
+
+### Response to the last campaign by policy type.
+```{r}
+count_obs2(data, policy_type, response)
+  
+prop_obs(data, 
+         policy_type, 
+         response) +
+  ggtitle("Proportion Of Response To Marketing Campaign",
+          "For Each Type of Policy")
+```
+  
+Customers with a personal auto policy had the most response to the campaign,
+while special auto had the lowest response. Customers with special auto policy had the highest proportion of response than customers who did not respond.
+  
+<br>
+
+### The most policy type owned by each gender
+```{r}
+count_obs2(data, policy_type, gender)
+
+prop_obs(data, policy_type, gender)
+```
+  
+For all the selected types of policy there are more female owned policies than
+male owned policies.
+  
+
+### The proportion of coverage and policy owned by customers 
+```{r}
+count_obs2(data, policy_type, coverage)
+
+prop_obs(data, policy_type, coverage)
+```
+  
+Personal auto policy and basic coverage segment have the highest number of 
+policyholders, while customer with special auto policy and premium coverage have the least number of policyholders.
+  
+<br>
+
+### The choice of coverage and customer income.
+```{r}
+num_cat_dis(data, income, coverage, p_typ = "fqp")
+
+num_cat_sumy(data, income, coverage)
+```
+  
+As expected customers with premium coverage have the highest average income,
+while customers with extended coverage have less average income than customers
+with basic income.
+  
+<br>
+Previous [Sales Channels And Vehicle Classification](page_4.html)  
+Back [Set Up](index.html)
+
+<br>
+<br>
+
+## Summary
+  
+> There are only a few customers with customer lifetime value (CLV) of above 40,000. Developing better business policies which improves customer centricity across the firm in order to enhance both customer aquisition and retention.
+  
+> Given that the best performing sales channel was auto agency channel which brought in twice as much sales than the company's web platforms, further boost of its presence on the web using SEO and other online marketing techniques to imporve its various web platforms.
+  
+> California, Oregon and Arizona consist of its major markets share but it has less customers in Nevada and Washington, marketing techniques should focus on  the targat location if a single marketing technique is being used across all target locations or should utilize its more successful techniques in  California. 
+  
+> Only a few number of customers purchased premium coverage unlike basic coverage.
+  
+> Few open complains were made by customers generally, however it should strive to maintain and improve its products services.
+  
+> More policy were purchaced for midsize cars than small and large size cars.
+
+> Few response were gotten from the last campaign conducted. A restrategy of its marketing activities should be put in place for both on and off the web to improve future response.
+  
+> Apart from customers with 1 to 3 number of policy there are more customers with 7 policies than 4 to 8 number of policies. More strategy on improving customer purchase frequency will be helpful.
